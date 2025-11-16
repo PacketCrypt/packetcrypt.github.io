@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PacketCrypt — Bandwidth‑Hard Crypto</title>
+  <meta name="description" content="Learn what PacketCrypt is, how bandwidth‑hard proof‑of‑work operates, and how to get started mining with a focus on network throughput." />
+  <meta name="theme-color" content="#d12133" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 fill=%27%23d12133%27/%3E%3Ctext x=%2750%25%27 y=%2756%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Arial%2C Helvetica%2C sans-serif%27 font-size=%2758%27 fill=%27%23fff%27%3EP%3C/text%3E%3C/svg%3E" />
+  <style>
+    :root{
+      --primary:#d12133;
+      --secondary:#ffffff;
+      --text:#1a1a1a;
+      --muted:#6b6b6b;
+      --bg:#ffffff;
+      --surface:#ffffff;
+      --border:#ececec;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";}
+    a{color:var(--primary);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1180px;margin:0 auto;padding:0 20px}
+    .skip-link{position:absolute;left:-9999px;top:auto;overflow:hidden}
+    .skip-link:focus{left:12px;top:12px;background:#000;color:#fff;padding:10px 14px;border-radius:8px;z-index:9999}
+    /* Header */
+    header{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:saturate(180%) blur(8px);
+      background:rgba(255,255,255,0.8);
+      border-bottom:1px solid var(--border);
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:12px;color:var(--text);text-decoration:none}
+    .logo{
+      width:40px;height:40px;border-radius:10px;background:var(--primary);
+      color:#fff;display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)
+    }
+    .brand-name{font-weight:800;letter-spacing:.2px}
+    .tagline{font-size:12px;color:var(--muted);margin-top:-4px}
+    .nav-links{display:flex;gap:18px;align-items:center}
+    .nav-links a{color:var(--text);font-weight:600;padding:8px 10px;border-radius:8px}
+    .nav-links a:hover{background:#f8f8f8;text-decoration:none}
+    .cta{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:10px 16px;font-weight:700;box-shadow:var(--shadow)}
+    .cta:hover{filter:brightness(.95);cursor:pointer}
+    .menu-btn{display:none;background:transparent;border:0;padding:8px}
+    /* Hero */
+    .hero{padding:72px 0 40px;position:relative;overflow:hidden}
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+    .super{display:inline-block;background:#feecee;color:var(--primary);font-weight:800;border-radius:999px;padding:6px 12px;margin-bottom:16px}
+    h1{font-size:44px;line-height:1.1;margin:0 0 14px}
+    .lead{font-size:18px;color:#343434;margin:0 0 22px}
+    .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:10px;border-radius:12px;padding:12px 16px;font-weight:800;border:2px solid transparent}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{filter:brightness(.95);text-decoration:none}
+    .btn-ghost{background:#fff;color:var(--primary);border-color:var(--primary)}
+    .btn-ghost:hover{background:#fff1f3;text-decoration:none}
+    .hero-card{
+      background:#fff;border:1px solid var(--border);border-radius:18px;padding:22px;
+      box-shadow:var(--shadow)
+    }
+    .stat{display:flex;justify-content:space-between;border-top:1px dashed var(--border);padding:12px 0}
+    .stat:first-child{border-top:0}
+    .stat b{font-size:28px}
+    .stat small{color:var(--muted)}
+    /* Sections */
+    section{padding:54px 0}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}
+    .section-title{font-size:28px;margin:0}
+    .kicker{color:var(--primary);font-weight:800;letter-spacing:.4px;text-transform:uppercase;font-size:12px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{
+      background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)
+    }
+    .card h3{margin:0 0 8px;font-size:18px}
+    .card p{margin:0;color:#343434}
+    .icon{
+      width:40px;height:40px;border-radius:10px;background:#feecee;color:var(--primary);
+      display:grid;place-items:center;font-weight:900;margin-bottom:10px
+    }
+    .list{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+    .list li{display:flex;gap:8px}
+    .check{color:var(--primary);font-weight:900}
+    .pill{display:inline-block;background:#fff1f3;color:var(--primary);border:1px solid #ffd7dd;border-radius:999px;padding:6px 10px;font-weight:700}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .muted{color:var(--muted)}
+    /* FAQ */
+    .faq-item{border-bottom:1px solid var(--border)}
+    .faq-q{display:flex;justify-content:space-between;gap:18px;padding:16px 0;cursor:pointer}
+    .faq-q h4{margin:0;font-size:16px}
+    .faq-a{display:none;padding:0 0 14px;color:#343434}
+    .faq-item.open .faq-a{display:block}
+    /* Footer */
+    footer{background:var(--primary);color:#fff;margin-top:40px}
+    .foot{display:grid;gap:12px;padding:28px 0}
+    .foot a{color:#fff;text-decoration:underline}
+    .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:18px}
+    .copyright{border-top:1px solid rgba(255,255,255,.25);padding-top:14px;color:#ffe5e8}
+    /* Utilities */
+    .surface-alt{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px}
+    .code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;background:#f8f8f8;border:1px solid var(--border);padding:10px;border-radius:8px}
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero-grid,.grid-3,.two-col,.foot-grid{grid-template-columns:1fr}
+      .nav-links{display:none}
+      .menu-btn{display:block}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <div class="container nav" role="navigation" aria-label="Main">
+      <a class="brand" href="#">
+        <div class="logo" aria-hidden="true">P</div>
+        <div>
+          <div class="brand-name">PacketCrypt</div>
+          <div class="tagline">Bandwidth‑hard crypto</div>
+        </div>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#how">How it works</a>
+        <a href="#mining">Mining</a>
+        <a href="#faq">FAQ</a>
+        <a href="#resources">Resources</a>
+        <button class="cta" onclick="document.getElementById('mining').scrollIntoView({behavior:'smooth'})">Start Mining</button>
+      </nav>
+      <button class="menu-btn" aria-label="Open menu" onclick="toggleMenu()">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d12133" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="super">Open • Bandwidth‑hard • Cooperative</span>
+          <h1>PacketCrypt: Proof‑of‑Work that rewards bandwidth</h1>
+          <p class="lead">PacketCrypt is a bandwidth‑hard proof‑of‑work designed to favor fast, well‑connected nodes. Instead of racing purely on hashes, miners compete by communicating—encouraging decentralization and real network performance.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#how">How it works</a>
+            <a class="btn btn-ghost" href="#mining">Start mining</a>
+          </div>
+          <div class="surface-alt" style="margin-top:16px">
+            <strong>Note:</strong> PacketCrypt is a proof‑of‑work algorithm. Based originally on Bitcoin, It is used by PacketCrypt Network.
+          </div>
+        </div>
+        <div>
+          <div class="hero-card" aria-label="Quick facts">
+            <div class="stat">
+              <div>
+                <div class="muted">Consensus type</div>
+                <b>Bandwidth‑hard PoW</b>
+              </div>
+              <div class="pill"><a href="https://github.com/PacketCrypt">Open source</a></div>
+            </div>
+            <div class="stat">
+              <div>
+                <div class="muted">Mining roles</div>
+                <b>Announcements + Blocks</b>
+              </div>
+              <div class="muted">Cooperative</div>
+            </div>
+            <div class="stat">
+              <div>
+                <div class="muted">Resource focus</div>
+                <b>Network throughput</b>
+              </div>
+              <div class="muted">CPU friendly</div>
+            </div>
+            <div class="stat">
+              <div>
+                <div class="muted">Goal</div>
+                <b>Favor connectivity</b>
+              </div>
+              <div class="muted">Reduce ASIC edge</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" aria-labelledby="about-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Overview</div>
+            <h2 id="about-title" class="section-title">What is PacketCrypt?</h2>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="icon">ℹ</div>
+            <h3>Bandwidth‑hard by design</h3>
+            <p>PacketCrypt is a proof‑of‑work where effective mining requires sustained communication among miners. By tying block quality to the volume and diversity of short “announcement” messages received, the protocol rewards nodes with strong bandwidth and good network topology.</p>
+          </div>
+          <div class="card">
+            <div class="icon">⚙</div>
+            <h3>Two cooperative roles</h3>
+            <p>Miners split into two roles:</p>
+            <ul class="list">
+              <li><span class="check">✓</span><strong>Announcement miners</strong> create and broadcast lightweight messages.</li>
+              <li><span class="check">✓</span><strong>Block miners (Pools)</strong> gather announcements and attempt blocks. More (and fresher) announcements can improve success.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" aria-labelledby="how-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Mechanics</div>
+            <h2 id="how-title" class="section-title">How PacketCrypt works</h2>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">1</div>
+            <h3>Announcements</h3>
+            <p>Announcement miners continually produce small, verifiable messages using CPU work. They broadcast these to block miners (pools) across the network.</p>
+          </div>
+          <div class="card">
+            <div class="icon">2</div>
+            <h3>Aggregation</h3>
+            <p>Block miners collect many announcements from diverse sources. The more timely and varied the announcements, the stronger the block candidate.</p>
+          </div>
+          <div class="card">
+            <div class="icon">3</div>
+            <h3>Block attempt</h3>
+            <p>Using the announcements as input, block miners search for a valid block hash. The protocol links block quality to the announcement set, pushing miners to maintain high bandwidth.</p>
+          </div>
+        </div>
+        <div class="surface-alt" style="margin-top:18px">
+          <strong>Why it matters:</strong> Traditional PoW favors specialized hardware. PacketCrypt shifts competitive advantage toward connectivity and cooperation, aiming to keep mining accessible to well‑connected, commodity hardware.
+        </div>
+      </div>
+    </section>
+
+    <section id="mining" aria-labelledby="mining-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Get started</div>
+            <h2 id="mining-title" class="section-title">Mining with PacketCrypt</h2>
+          </div>
+          <a class="btn btn-primary" href="#resources">Downloads & docs</a>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <h3>Choose your role</h3>
+            <ul class="list">
+              <li><span class="check">✓</span><strong>Announcement miner:</strong> Lowest barrier to entry. Maximize stable upstream/downstream bandwidth.</li>
+              <li><span class="check">✓</span><strong>Block miner:</strong> Requires running a full node on a network that uses PacketCrypt and maintaining high‑throughput links to announcement sources.</li>
+            </ul>
+            <div class="surface-alt" style="margin-top:10px">
+              Tip: Many setups run both roles—announcements locally and block mining via pools or self‑hosted nodes, depending on the target network’s rules.
+            </div>
+          </div>
+          <div class="card">
+            <h3>Quick start</h3>
+            <ol class="list" style="list-style:auto;padding-left:18px">
+              <li>Install a PacketCrypt miner build for your OS.</li>
+              <li>We recommend the <a href="https://pkt.world/mining">pkt.world wallet</a> it can mine aswell.</li>
+              <li>You can also mine using the <a href="https://github.com/PacketCrypt/packetcrypt_rs">Rust Miner</a>.</li>
+              <li>Monitor bandwidth, latency, cpu temperature, cpu workload and share submissions; tune thread counts and network paths.</li>
+            </ol>
+            <span><b>Example</b></span>
+            <div class="code" aria-label="Example CLI">
+              ./packetcrypt ann -p [your_wallet_address] http://pool.pkt.world
+            </div>
+          </div>
+        </div>
+        <div class="grid-3" style="margin-top:18px">
+          <div class="card">
+            <h3>What you need</h3>
+            <ul class="list">
+              <li><span class="check">✓</span>Reliable broadband with low jitter</li>
+              <li><span class="check">✓</span>Multi‑core CPU</li>
+              <li><span class="check">✓</span>Open ports or NAT‑friendly setup</li>
+              <li><span class="check">✓</span>Target network’s wallet/node</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Tuning tips</h3>
+            <ul class="list">
+              <li><span class="check">✓</span>Pin miner close (network‑wise) to your pool/node</li>
+              <li><span class="check">✓</span>Experiment with thread counts</li>
+              <li><span class="check">✓</span>Watch system load vs. throughput</li>
+              <li><span class="check">✓</span>Prefer wired Ethernet over Wi‑Fi</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Good to know</h3>
+            <p class="muted">PacketCrypt emphasizes bandwidth and cooperation. GPUs/ASICs offer limited edge compared to traditional hash‑centric PoW, but performance still depends on your hardware and network configuration.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ecosystem" aria-labelledby="ecosystem-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Ecosystem</div>
+            <h2 id="ecosystem-title" class="section-title">Where PacketCrypt is used</h2>
+          </div>
+        </div>
+        <div class="card">
+          <p>PacketCrypt is an algorithm that can be adopted by different blockchains. The current implementation on mainnet uses PacketCrypt to incentivize network bandwidth while securing its chain. Each implementing network defines its own monetary policy, block times, and reward schedules.</p>
+          <div class="surface-alt" style="margin-top:10px">
+            Implementation details vary by network. Always consult the target chain’s documentation for parameters such as block interval, emission, and mining configuration.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Answers</div>
+            <h2 id="faq-title" class="section-title">Frequently asked questions</h2>
+          </div>
+        </div>
+        <div class="card">
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+              <h4>Is PacketCrypt a cryptocurrency?</h4>
+              <span aria-hidden="true">+</span>
+            </div>
+            <div class="faq-a">PacketCrypt itself is a proof‑of‑work algorithm. Cryptocurrencies can implement PacketCrypt as their consensus mechanism. When people say “PacketCrypt coin,” they typically refer to the coin on th PacketCrypt mainnet that uses PacketCrypt.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+              <h4>What hardware is best?</h4>
+              <span aria-hidden="true">+</span>
+            </div>
+            <div class="faq-a">A multi‑core CPU with strong, stable internet bandwidth and low latency to peers or pools. Disk and GPU are less critical than in compute‑heavy PoW algorithms.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+              <h4>Does PacketCrypt reduce energy use?</h4>
+              <span aria-hidden="true">+</span>
+            </div>
+            <div class="faq-a">PacketCrypt still consumes resources, but it shifts competitive advantage from specialized hashing hardware toward network connectivity. Actual energy usage depends on your setup and the implementing network’s difficulty.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+              <h4>How do rewards work?</h4>
+              <span aria-hidden="true">+</span>
+            </div>
+            <div class="faq-a">Rewards are defined by the specific blockchain using PacketCrypt. Typically, announcement miners are incentivized because their messages improve the success of block miners, either directly or via pools.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+              <h4>Where can I get the software?</h4>
+              <span aria-hidden="true">+</span>
+            </div>
+            <div class="faq-a">Use the official repositories and documentation of the network you plan to mine. Verify signatures and integrity before running binaries.</div>
+          </div>
+        </div>
+        <div class="surface-alt" style="margin-top:14px">
+          Disclaimer: Mining and trading digital assets carry risk. Do your own research and comply with your local regulations.
+        </div>
+      </div>
+    </section>
+
+    <section id="resources" aria-labelledby="resources-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Resources</div>
+            <h2 id="resources-title" class="section-title">Docs and community</h2>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <h3>Official links</h3>
+            <ul class="list">
+              <li><span class="check">✓</span>PacketCrypt repository — <a href="https://github.com/PacketCrypt/PacketCrypt">GitHub</a></li>
+              <li><span class="check">✓</span>PacketCrypt Miner repository —<a href="https://github.com/PacketCrypt/packetcrypt_rs">GitHub</a></li>
+              <li><span class="check">✓</span>Community channels — <a href="https://discord.gg/dx3a53fPYb">Discord</a></li>
+              <li><span class="check">✓</span>Whitepaper - <a href="/assets/PacketCrypt-2020-09-04.pdf">View</a></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Security checklist</h3>
+            <ul class="list">
+              <li><span class="check">✓</span>Verify binary signatures or build from source</li>
+              <li><span class="check">✓</span>Use unique wallets on testnet vs. mainnet</li>
+              <li><span class="check">✓</span>Back up keys securely; never share seed phrases</li>
+              <li><span class="check">✓</span>Use dedicated machines or containers for mining</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container" style="padding-bottom:20px">
+      <a class="btn btn-ghost" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top ↑</a>
+    </div>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="container foot">
+      <div class="foot-grid">
+        <div>
+          <div class="brand" style="color:#fff;text-decoration:none">
+            <div class="logo" aria-hidden="true" style="background:#fff;color:#d12133">P</div>
+            <div>
+              <div class="brand-name">PacketCrypt</div>
+              <div class="tagline" style="color:#ffe5e8">Bandwidth‑hard crypto</div>
+            </div>
+          </div>
+          <p style="margin-top:10px;color:#ffe5e8">Open, cooperative proof‑of‑work that rewards connectivity.</p>
+        </div>
+        <div>
+          <strong>Explore</strong>
+          <ul class="list" style="margin-top:8px">
+            <li><a href="#about">About</a></li>
+            <li><a href="#how">How it works</a></li>
+            <li><a href="#mining">Mining</a></li>
+            <li><a href="#resources">Resources</a></li>
+          </ul>
+        </div>
+        <div>
+          <strong>Community</strong>
+          <ul class="list" style="margin-top:8px">
+            <li></li>
+            <li><a href="https://pkt.world/explorer">Explorer</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        © <span id="year"></span> PacketCrypt — This site is community‑maintained. PacketCrypt is an algorithm; network parameters vary by implementation.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu: simple fallback (clones links into a popup)
+    function toggleMenu(){
+      const links = document.querySelector('.nav-links');
+      if(!links){return}
+      if(getComputedStyle(links).display !== 'none'){return}
+      const items = ['About','#about','How it works','#how','Mining','#mining','FAQ','#faq','Resources','#resources'];
+      let html = '<div style="padding:10px 0">';
+      for(let i=0;i<items.length;i+=2){
+        html += '<div style="padding:10px 0;border-bottom:1px solid #eee"><a style="color:#d12133;font-weight:800" href="'+items[i+1]+'">'+items[i]+'</a></div>';
+      }
+      html += '<div style="padding:12px 0"><a class="btn btn-primary" href="#mining" style="text-decoration:none">Start Mining</a></div>';
+      html += '</div>';
+      const wrap = document.createElement('div');
+      wrap.style.position='fixed';
+      wrap.style.inset='0';
+      wrap.style.background='rgba(0,0,0,.4)';
+      wrap.style.zIndex='999';
+      wrap.innerHTML = '<div role="dialog" aria-label="Menu" style="position:absolute;right:0;top:0;height:100%;width:min(84%,360px);background:#fff;border-left:1px solid #eee;box-shadow:0 20px 60px rgba(0,0,0,.2);padding:20px">'+html+'<button class="btn btn-ghost" style="margin-top:10px" onclick="this.closest(\'.menu-wrap\')?.remove()">Close</button></div>';
+      wrap.className='menu-wrap';
+      wrap.addEventListener('click', e=>{ if(e.target===wrap) wrap.remove() });
+      document.body.appendChild(wrap);
+    }
+    function toggleFaq(el){
+      const item = el.closest('.faq-item');
+      if(!item) return;
+      item.classList.toggle('open');
+    }
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
