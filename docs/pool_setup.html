@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Setting up a PacketCrypt Pool</title>
+    <meta name="description" content="Step‑by‑step guide to deploy a full PacketCrypt mining pool – machines, services, repos, configuration and running instructions." />
+    <meta name="theme-color" content="#d12133" />
+    <link rel="icon"
+          href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 fill=%27%23d12133%27/%3E%3Ctext x=%2750%25%27 y=%2756%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Arial%2C Helvetica%2C sans-serif%27 font-size=%2758%27 fill=%27%23fff%27%3EP%3C/text%3E%3C/svg%3E" />
+    <style>
+        :root{
+            --primary:#d12133;
+            --secondary:#ffffff;
+            --text:#1a1a1a;
+            --muted:#6b6b6b;
+            --bg:#ffffff;
+            --surface:#ffffff;
+            --border:#ececec;
+            --shadow: 0 10px 30px rgba(0,0,0,0.06);
+            --radius:14px;
+        }
+        *{box-sizing:border-box}
+        html,body{
+            margin:0;padding:0;background:var(--bg);color:var(--text);
+            font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
+            display:flex;flex-direction:column;min-height:100vh;
+        }
+        main{flex:1}
+        footer{background:var(--primary);color:#fff;padding:40px 0;}
+        a{color:var(--primary);text-decoration:none}
+        a:hover{text-decoration:underline}
+        .container{max-width:1180px;margin:0 auto;padding:0 20px}
+        .skip-link{position:absolute;left:-9999px;top:auto;overflow:hidden}
+        .skip-link:focus{left:12px;top:12px;background:#000;color:#fff;padding:10px 14px;border-radius:8px;z-index:9999}
+        /* Header */
+        header{
+            position:sticky;top:0;z-index:50;
+            backdrop-filter:saturate(180%) blur(8px);
+            background:rgba(255,255,255,0.8);
+            border-bottom:1px solid var(--border);
+        }
+        .nav{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0}
+        .brand{display:flex;align-items:center;gap:12px;color:var(--text);text-decoration:none}
+        .logo{
+            width:40px;height:40px;border-radius:var(--radius);
+            background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)
+        }
+        .brand-name{font-weight:800;letter-spacing:.2px}
+        .tagline{font-size:12px;color:var(--muted);margin-top:-4px}
+        .nav-links{display:flex;gap:18px;align-items:center}
+        .nav-links a{color:var(--text);font-weight:600;padding:8px 10px;border-radius:8px}
+        .nav-links a:hover{background:#f8f8f8;text-decoration:none}
+        .cta{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:10px 16px;font-weight:700;box-shadow:var(--shadow)}
+        .cta:hover{filter:brightness(.95);cursor:pointer}
+        .menu-btn{display:none;background:transparent;border:0;padding:8px}
+        /* Hero */
+        .hero{padding:72px 0 40px;position:relative;overflow:hidden}
+        .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+        h1{font-size:44px;line-height:1.1;margin:0 0 14px}
+        .lead{font-size:18px;color:#343434;margin:0 0 22px}
+        .btn{display:inline-flex;align-items:center;gap:10px;border-radius:12px;padding:12px 16px;font-weight:800;border:2px solid transparent}
+        .btn-primary{background:var(--primary);color:#fff}
+        .btn-primary:hover{filter:brightness(.95);text-decoration:none}
+        /* Sections */
+        section{padding:54px 0}
+        .section-title{font-size:28px;margin-bottom:24px}
+        .kicker{color:var(--primary);font-weight:800;letter-spacing:.4px;text-transform:uppercase;font-size:12px}
+        .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+        .card{
+            background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)
+        }
+        .card h3{margin:0 0 8px;font-size:18px}
+        .card p{margin:0;color:#343434}
+        .list{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+        .list li{display:flex;gap:8px}
+        .code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;background:#f8f8f8;border:1px solid var(--border);padding:12px;border-radius:8px;overflow:auto}
+        table{border-collapse:collapse;width:100%;margin-bottom:1.5rem}
+        th,td{border:1px solid var(--border);padding:.75rem;text-align:left}
+        th{background:#f7f7f7}
+        /* FAQ accordion */
+        .faq-item{border-bottom:1px solid var(--border)}
+        .faq-q{display:flex;justify-content:space-between;cursor:pointer;padding:16px 0}
+        .faq-q h4{margin:0;font-size:16px}
+        .faq-a{display:none;padding:0 0 14px;color:#343434}
+        .faq-item.open .faq-a{display:block}
+        /* Footer layout */
+        footer .foot-grid{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;width:100%}
+        footer .foot-grid > div{flex:1 1 200px}
+        footer .brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
+        footer .logo{width:40px;height:40px;border-radius:10px;background:#fff;color:var(--primary);display:grid;place-items:center;font-weight:800}
+        footer .brand-name{font-weight:800}
+        footer .tagline{font-size:12px;color:#ffe5e8}
+        footer .copyright{margin-top:12px;text-align:center}
+        /* Responsive */
+        @media (max-width: 980px){
+            .hero-grid,.grid-3{grid-template-columns:1fr}
+            .nav-links{display:none}
+            .menu-btn{display:block}
+        }
+    </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<!-- ===== HEADER ===== -->
+<header>
+    <div class="container nav" role="navigation" aria-label="Main">
+        <a class="brand" href="#">
+            <div class="logo" aria-hidden="true">P</div>
+            <div>
+                <div class="brand-name">PacketCrypt</div>
+                <div class="tagline">Bandwidth‑hard crypto</div>
+            </div>
+        </a>
+        <!-- Primary navigation -->
+        <nav class="nav-links" aria-label="Primary">
+            <a href="#expectations">Expectations</a>
+            <a href="#block-mining">Block Mining & Pool</a>
+            <a href="#general-info">General Information</a>
+            <a href="#repo-info">Repository Information</a>
+            <a href="#network">Network Ranges</a>
+            <a href="#ports">Port Ranges</a>
+            <a href="#install">Installation</a>
+            <a href="#config">Configuration</a>
+            <a href="#run-manually">Run Manually</a>
+            <a href="#nginx">NGINX Setup</a>
+            <a href="/docs">Return to Docs</a>
+        </nav>
+        <!-- Mobile menu button -->
+        <button class="menu-btn" aria-label="Open menu" onclick="toggleMenu()">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                 stroke="#d12133" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+    </div>
+</header>
+<!-- ===== MAIN ===== -->
+<main id="main">
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div>
+                <h1>Setting up a PacketCrypt Pool</h1>
+                <p class="lead">Deploy a fully‑functional PacketCrypt mining pool on Ubuntu 18.04/20.04 LTS – machine roles, services, installation, configuration and running instructions.</p>
+                <p class="lead"><b>Setting up a pool is a highly technical and difficult process, This article was generated from previous sources, It may or may not be functional and or accurate.</b></p>
+            </div>
+        </div>
+    </section>
+    <!-- Expectations -->
+    <section id="expectations" class="container">
+        <h2 class="section-title">Expectations & Machine Roles</h2>
+        <p>Before you begin you should have:</p>
+        <ul class="list">
+            <li>General Linux knowledge</li>
+            <li>Git basics</li>
+            <li>Networking fundamentals</li>
+            <li>Blockchain concepts</li>
+            <li>At least 6 Ubuntu machines (18.04 or 20.04 LTS)</li>
+        </ul>
+        <p>Roles per machine (you can stack them if you like – just watch ports):</p>
+        <table>
+            <tr><th>Machine</th><th>Role(s)</th></tr>
+            <tr><td>1</td><td>PKT node</td></tr>
+            <tr><td>2</td><td>Master, Paymaker & Block Handler</td></tr>
+            <tr><td>3‑4</td><td>Ann Handlers</td></tr>
+            <tr><td>5‑6</td><td>Block Miners</td></tr>
+        </table>
+        <p>As of June 2022 the network difficulty is high – a dozen or more miners with 768 GB RAM is recommended for serious production.</p>
+    </section>
+    <!-- Block mining -->
+    <section id="block-mining" class="container">
+        <h2 class="section-title">Block Mining & Running a Pool</h2>
+        <p>Pool operator must provide the following services:</p>
+        <ul class="list">
+            <li><strong>pktd node</strong> – One (or more) pktd instance(s) are needed for the Master.</li>
+            <li><strong>Master</strong> – Coordinates work and distributes configuration.</li>
+            <li><strong>Ann Handler(s)</strong> – Accept announcements from miners and hand them to block miners.</li>
+            <li><strong>Block Miner(s)</strong> – Download announcements and mine blocks.</li>
+            <li><strong>Block Handler(s)</strong> – Validate and submit block shares.</li>
+            <li><strong>Paymaker</strong> – Keeps track of shares and sends payouts via the Master.</li>
+        </ul>
+    </section>
+    <!-- General Information -->
+    <section id="general-info" class="container">
+        <h2 class="section-title">General Information</h2>
+        <h3>Repository Information</h3>
+        <table>
+            <tr><th>Repository</th><th>Tools</th></tr>
+            <tr><td>packetcrypt_rs</td><td><a href="https://github.com/cjdelisle/packetcrypt_rs">AnnHandler, BlkMiner, AnnMiner</a></td></tr>
+            <tr><td>PacketCrypt</td><td><a href="https://github.com/cjdelisle/PacketCrypt/">Master, Paymaker, BlkHandler</a></td></tr>
+            <tr><td>pktd</td><td><a href="https://github.com/pkt-cash/pktd">pktd</a></td></tr>
+        </table>
+        <h3>Assumed Network Ranges</h3>
+        <p>Public: 198.51.100.0/24   Private: 10.0.16.0/24</p>
+        <table>
+            <tr><th>Machine</th><th>Public IP</th><th>Private IP</th></tr>
+            <tr><td>1</td><td>198.51.100.1</td><td>10.0.16.1</td></tr>
+            <tr><td>2</td><td>198.51.100.2</td><td>10.0.16.2</td></tr>
+            <tr><td>3</td><td>198.51.100.3</td><td>10.0.16.3</td></tr>
+            <tr><td>4</td><td>198.51.100.4</td><td>10.0.16.4</td></tr>
+            <tr><td>5</td><td>–</td><td>10.0.16.5</td></tr>
+            <tr><td>6</td><td>–</td><td>10.0.16.6</td></tr>
+        </table>
+        <h3>Assumed Port Ranges</h3>
+        <table>
+            <tr><th>Service</th><th>Machine</th><th>Port / Range</th></tr>
+            <tr><td>Master</td><td>Machine 2</td><td>8080</td></tr>
+            <tr><td>Paymaker</td><td>Machine 2</td><td>8081</td></tr>
+            <tr><td>Block Handlers</td><td>Machine 2</td><td>8100‑8200</td></tr>
+            <tr><td>Ann Handlers</td><td>Machines 3 & 4</td><td>80</td></tr>
+        </table>
+    </section>
+    <!-- Installation per machine -->
+    <section id="install" class="container">
+        <h2 class="section-title">Installation</h2>
+        <h3>Machine 1 – PKTD node</h3>
+        <p>Requires ≥ 150 GB NVMe (250 GB recommended).</p>
+        <ol class="list">
+            <li>Install Go<br><pre class="code">sudo add-apt-repository ppa:longsleep/golang-backports
+sudo apt update
+sudo apt install golang-go</pre></li>
+            <li>Install Git<br><pre class="code">sudo apt install git</pre></li>
+            <li>Clone & build pktd (develop branch)<br><pre class="code">git clone --branch develop https://github.com/pkt-cash/pktd
+cd pktd
+./do</pre>
+                <p>Output should include “Everything looks good – use ./bin/pktd to launch”.</p>
+        </ol>
+        <h3>Machine 2 – Master, Paymaker & Block Handler</h3>
+        <ol class="list">
+            <li>Install prerequisites (npm, node, etc.) – see snippet below.</li>
+            <li>Clone PacketCrypt master (master branch) and build:<br><pre class="code">git clone --branch master https://github.com/cjdelisle/PacketCrypt
+cd PacketCrypt
+npm install</pre></li>
+        </ol>
+        <h3>Machine 3‑6 – AnnHandler / Block Miner / AnnMiner</h3>
+        <ol class="list">
+            <li>Install git, gcc, curl and Rust:<br><pre class="code">sudo apt install gcc git curl
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh</pre></li>
+            <li>Clone packetcrypt_rs (develop branch) and build:<br><pre class="code">git clone --branch develop https://github.com/cjdelisle/packetcrypt_rs
+cd packetcrypt_rs
+~/.cargo/bin/cargo build --release --features jemalloc</pre></li>
+        </ol>
+    </section>
+    <!-- Config of pool.js -->
+    <section id="config-js" class="container">
+        <h2 class="section-title">Configuration – pool.example.js</h2>
+        <h3>config.privateSeed</h3>
+        <p>Keep it `null` unless you know what you’re doing – signing announcements is rarely used and can break multi‑pool mining.</p>
+        <pre class="code">config.privateSeed = null</pre>
+        <h3>config.paymakerHttpPasswd</h3>
+        <p>Random and fire‑walled. Used as the password in HTTP basic auth.</p>
+        <pre class="code">config.paymakerHttpPasswd = 'anyone with this password can post results to the paymaker';</pre>
+        <h3>config.masterUrl</h3>
+        <p>Used by the Paymaker and Block Handlers to locate the Master.</p>
+        <pre class="code">config.masterUrl = 'http://localhost:8080';</pre>
+        <h3>config.rpc</h3>
+        <pre class="code">user:  'x',
+pass:  'x',</pre>
+        <h3>config.annHandlers</h3>
+        <p>List each AnnHandler with its own port – no overlap with BlkMiner ports.</p>
+        <pre class="code">[ann_handler.ah0]
+  url:  'http://10.0.16.3:8081'
+[ann_handler.ah1]
+  url:  'http://10.0.16.4:8081'</pre>
+        <h3>config.blkHandlers</h3>
+        <pre class="code">[blk_handler.blk0]
+  url:  'http://localhost:8100'
+  port: 8082
+  host: '::'
+  maxConnections: 50</pre>
+        <h3>config.master</h3>
+        <pre class="code">port: 8080,
+host: '::',
+annMinWork: Util.annWorkToTarget(128),
+shareWorkDivisor: 4,
+annVersions: [1],
+mineOldAnns: 0</pre>
+        <h3>config.payMaker</h3>
+        <pre class="code">url:  'pool.pktpool.io',
+port: 8081,
+host: '::',
+updateCycle: 120,
+historyDepth: 60 * 60 * 24 * 30,
+maxConnections: 200,
+blockPayoutFraction: 0.5,
+poolFee: 0.40,
+poolFeeAddress: "pkt1qyc9dkhca7uc84zn3vlgd0h0fxr3twwn34qgeqe",
+pplnsAnnConstantX: 0.125,
+pplnsBlkConstantX: 2,
+defaultAddress: "pkt1q6hqsqhqdgqfd8t3xwgceulu7k9d9w5t2amath0qxyfjlvl3s3u4sjza2g2",
+errorAddress: "pkt1q6hqsqhqdgqfd8t3xwgceulu7k9d9w5t2amath0qxyfjlvl3s3u4sjza2g2"</pre>
+    </section>
+    <!-- pool.toml config -->
+    <section id="pool-toml" class="container">
+        <h2 class="section-title">Configuration – pool.example.toml</h2>
+        <p>Edit the example file and then run the command below to create the real config.</p>
+        <pre class="code">~/packetcrypt_rs/pool.example.toml ~/packetcrypt_rs/pool.toml</pre>
+        <p>In the TOML file you’ll set the paymaker password and master URL – they match the values in `pool.js`.</p>
+        <pre class="code">paymaker_http_password = "secret"
+master_url = "http://pool.pktpool.io"</pre>
+    </section>
+    <!-- Running Manually -->
+    <section id="run-manually" class="container">
+        <h2 class="section-title">Running the Pool Manually</h2>
+        <h3>Machine 1 – PKTD</h3>
+        <p>Make sure the node has synced to current height before launching mining.</p>
+        <pre class="code">./pktd/bin/pktd --rpcuser=XXX --rpcpass=XXX --miningaddr &lt;your PKT wallet address&gt;</pre>
+        <h3>Machine 2 – Master, Paymaker & Block Handlers</h3>
+        <pre class="code">node ./pool.js --master
+node ./pool.js --payMaker
+node ./pool.js --blk0   # first BlkHandler
+node ./pool.js --blk1   # second BlkHandler</pre>
+        <h3>Machine 3‑4 – Ann Handlers</h3>
+        <pre class="code">./target/release/packetcrypt ah --config /path/to/pool.toml ah0
+./target/release/packetcrypt ah --config /path/to/pool.toml ah1</pre>
+        <h3>Machine 5‑6 – Block Miners</h3>
+        <pre class="code">./target/release/packetcrypt blk <Master Address> --paymentaddr <wallet> --threads 80 --memorysizemb 665000 --handlerpass NoOneStealsMyAnns --subscribe 10.0.16.3:6666 --bind 0.0.0.0:6667 --mcast 239.0.1.1</pre>
+    </section>
+    <!-- NGINX setup -->
+    <section id="nginx" class="container">
+        <h2 class="section-title">NGINX Reverse‑Proxy (External AnnMining)</h2>
+        <p>Install Nginx and create a simple reverse‑proxy for the Master and Paymaker.</p>
+        <pre class="code">sudo apt update
+sudo apt install nginx
+unlink /etc/nginx/sites-enabled/default
+cd /etc/nginx/sites-available
+sudo vim reverse-proxy.conf
+# Paste the config below</pre>
+        <pre class="code">server {
+    listen 80;
+    listen [::]:80;
+    server_name <masterURL>;
+    location / {
+      proxy_pass http://localhost:8080/;
+    }
+}
+server {
+    listen 80;
+    listen [::]:80;
+    server_name paymaker.pktpool.io;
+    location / {
+      proxy_pass http://localhost:8081/;
+    }
+}</pre>
+        <pre class="code">ln -s /etc/nginx/sites-available/reverse-proxy.conf /etc/nginx/sites-enabled/reverse-proxy.conf
+rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl reload nginx</pre>
+    </section>
+</main>
+<!-- ===== FOOTER ===== -->
+<footer role="contentinfo">
+    <div class="container foot">
+        <div class="foot-grid">
+            <div>
+                <div class="brand" style="color:#fff;text-decoration:none">
+                    <div class="logo" aria-hidden="true" style="background:#fff;color:#d12133">P</div>
+                    <div>
+                        <div class="brand-name">PacketCrypt</div>
+                        <div class="tagline" style="color:#ffe5e8">Bandwidth‑hard crypto</div>
+                    </div>
+                </div>
+                <p style="margin-top:10px;color:#ffe5e8">Open, cooperative proof‑of‑work that rewards connectivity.</p>
+            </div>
+        </div>
+        <div class="copyright">
+            © <span id="year"></span> PacketCrypt — This site is community‑maintained. PacketCrypt is an algorithm; network parameters vary by implementation.
+        </div>
+    </div>
+</footer>
+<script>
+    /* Update year */
+    document.getElementById('year').textContent = new Date().getFullYear();
+    /* Mobile menu toggle */
+    function toggleMenu() {
+        document.querySelector('.nav-links').classList.toggle('open');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>pktwallet – PKT Command‑Line Wallet</title>
+    <meta name="description" content="Official pktwallet documentation – installation, usage, sending, folding, alternative GUIs and FAQs." />
+    <meta name="theme-color" content="#d12133" />
+    <link rel="icon"
+          href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 fill=%27%23d12133%27/%3E%3Ctext x=%2750%25%27 y=%2756%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Arial%2C Helvetica%2C sans-serif%27 font-size=%2758%27 fill=%27%23fff%27%3EP%3C/text%3E%3C/svg%3E" />
+    <style>
+        :root{
+            --primary:#d12133;
+            --secondary:#ffffff;
+            --text:#1a1a1a;
+            --muted:#6b6b6b;
+            --bg:#ffffff;
+            --surface:#ffffff;
+            --border:#ececec;
+            --shadow: 0 10px 30px rgba(0,0,0,0.06);
+            --radius:14px;
+        }
+        *{box-sizing:border-box}
+        html,body{
+            margin:0;padding:0;background:var(--bg);color:var(--text);
+            font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
+            display:flex;flex-direction:column;min-height:100vh;
+        }
+        main{flex:1}
+        footer{background:var(--primary);color:#fff;padding:40px 0;font-size:0.9rem;display:flex;flex-direction:column;align-items:center;}
+        a{color:var(--primary);text-decoration:none}
+        a:hover{text-decoration:underline}
+        .container{max-width:1180px;margin:0 auto;padding:0 20px}
+        .skip-link{position:absolute;left:-9999px;top:auto;overflow:hidden}
+        .skip-link:focus{left:12px;top:12px;background:#000;color:#fff;padding:10px 14px;border-radius:8px;z-index:9999}
+        /* Header */
+        header{
+            position:sticky;top:0;z-index:50;
+            backdrop-filter:saturate(180%) blur(8px);
+            background:rgba(255,255,255,0.8);
+            border-bottom:1px solid var(--border);
+        }
+        .nav{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0}
+        .brand{display:flex;align-items:center;gap:12px;color:var(--text);text-decoration:none}
+        .logo{
+            width:40px;height:40px;border-radius:10px;background:var(--primary);
+            color:#fff;display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)
+        }
+        .brand-name{font-weight:800;letter-spacing:.2px}
+        .tagline{font-size:12px;color:var(--muted);margin-top:-4px}
+        .nav-links{display:flex;gap:18px;align-items:center}
+        .nav-links a{color:var(--text);font-weight:600;padding:8px 10px;border-radius:8px}
+        .nav-links a:hover{background:#f8f8f8;text-decoration:none}
+        .cta{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:10px 16px;font-weight:700;box-shadow:var(--shadow)}
+        .cta:hover{filter:brightness(.95);cursor:pointer}
+        .menu-btn{display:none;background:transparent;border:0;padding:8px}
+        /* Hero */
+        .hero{padding:72px 0 40px;position:relative;overflow:hidden}
+        .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+        h1{font-size:44px;line-height:1.1;margin:0 0 14px}
+        .lead{font-size:18px;color:#343434;margin:0 0 22px}
+        .btn{display:inline-flex;align-items:center;gap:10px;border-radius:12px;padding:12px 16px;font-weight:800;border:2px solid transparent}
+        .btn-primary{background:var(--primary);color:#fff}
+        .btn-primary:hover{filter:brightness(.95);text-decoration:none}
+        /* Sections */
+        section{padding:54px 0}
+        .section-title{font-size:28px;margin-bottom:24px}
+        .kicker{color:var(--primary);font-weight:800;letter-spacing:.4px;text-transform:uppercase;font-size:12px}
+        .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+        .card{
+            background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)
+        }
+        .card h3{margin:0 0 8px;font-size:18px}
+        .card p{margin:0;color:#343434}
+        .list{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+        .list li{display:flex;gap:8px}
+        .code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;background:#f8f8f8;border:1px solid var(--border);padding:12px;border-radius:8px;overflow:auto}
+        table{border-collapse:collapse;width:100%;margin-bottom:1.5rem}
+        th,td{border:1px solid var(--border);padding:.75rem;text-align:left}
+        th{background:#f7f7f7}
+        /* FAQ accordion */
+        .faq-item{border-bottom:1px solid var(--border)}
+        .faq-q{display:flex;justify-content:space-between;cursor:pointer;padding:16px 0}
+        .faq-q h4{margin:0;font-size:16px}
+        .faq-a{display:none;padding:0 0 14px;color:#343434}
+        .faq-item.open .faq-a{display:block}
+        /* Footer layout */
+        footer .foot-grid{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;width:100%}
+        footer .foot-grid > div{flex:1 1 200px}
+        footer .brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
+        footer .logo{width:40px;height:40px;border-radius:10px;background:#fff;color:var(--primary);display:grid;place-items:center;font-weight:800}
+        footer .brand-name{font-weight:800}
+        footer .tagline{font-size:12px;color:#ffe5e8}
+        footer .copyright{margin-top:12px;text-align:center}
+        /* Responsive */
+        @media (max-width: 980px){
+            .hero-grid,.grid-3{grid-template-columns:1fr}
+            .nav-links{display:none}
+            .menu-btn{display:block}
+        }
+    </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER ===== -->
+<header>
+    <div class="container nav" role="navigation" aria-label="Main">
+        <a class="brand" href="#">
+            <div class="logo" aria-hidden="true">P</div>
+            <div>
+                <div class="brand-name">PacketCrypt</div>
+                <div class="tagline">Bandwidth‑hard crypto</div>
+            </div>
+        </a>
+
+        <nav class="nav-links" aria-label="Primary">
+            <a href="#intro">Intro</a>
+            <a href="#install">Install</a>
+            <a href="#create">Create Wallet</a>
+            <a href="#run">Run Wallet</a>
+            <a href="#address">New Address</a>
+            <a href="#cli">CLI Wallet</a>
+            <a href="#using">Using the Wallet</a>
+            <a href="#gui">Alternative GUIs</a>
+            <a href="#faq">FAQ</a>
+            <a href="/docs">Docs Index</a>
+        </nav>
+
+        <button class="menu-btn" aria-label="Open menu" onclick="toggleMenu()">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                 stroke="#d12133" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+    </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main id="main">
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div>
+                <h1>Command‑Line PacketCrypt Coin Wallet</h1>
+                <p class="lead">Create, manage and use a PacketCrypt Coin wallet from the terminal. Installation, address generation, sending, folding, and FAQs all in one place.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Intro -->
+    <section id="intro" class="container">
+        <h2 class="section-title">What is packetcryptwallet?</h2>
+        <p>packetcryptwallet (pktwallet) is the official command‑line wallet for the PacketCrypt (PKTc) network.  It lets you create wallets, generate addresses, sync with the blockchain, send coins, fold small payments and more – all from a terminal.  For mining it is the recommended wallet; never mine into an Electrum wallet.</p>
+    </section>
+
+    <!-- Installation -->
+    <section id="install" class="container">
+        <h2 class="section-title">First‑Time Installation</h2>
+
+        <h3>Downloading packetcryptwalletd (pktd)</h3>
+        <p>Choose your OS and download the latest release from <a href="https://github.com/pkt-cash/pktd/releases">pktd releases</a>:</p>
+
+        <table>
+            <tr><th>Platform</th><th>Package</th><th>Instructions</th></tr>
+            <tr>
+                <td>Windows</td>
+                <td>‑windows.zip (e.g. pktd‑v1.4.0‑windows.zip)</td>
+                <td>Unzip, open a command prompt, go to <code>…/pktd/bin</code> and run <code>pktwallet.exe</code> / <code>pktctl.exe</code></td>
+            </tr>
+            <tr>
+                <td>macOS</td>
+                <td>‑macos.pkg (e.g. pktd‑v1.4.0‑macos.pkg)</td>
+                <td>Double‑click the package, then run <code>./bin/pktwallet</code> or <code>./bin/pktctl</code></td>
+            </tr>
+            <tr>
+                <td>Linux</td>
+                <td>Debian/Ubuntu: <code>pktd‑v1.4.0‑linux.deb</code><br>
+                    Fedora/RedHat: <code>pktd‑v1.4.0‑linux.rpm</code><br>
+                    Arch/Manjaro: <a href="https://aur.archlinux.org/packages/pktd">AUR package</a></td>
+                <td>Install via <code>dpkg -i</code> / <code>rpm -i</code> or <code>yay -S pktd</code>, then run <code>./bin/pktwallet</code> / <code>./bin/pktctl</code></td>
+            </tr>
+        </table>
+
+        <h3>Creating a New Wallet</h3>
+        <p>After the binaries are installed, create a wallet with the command below.  Keep the 12‑word seed on a paper you cleansing later.</p>
+        <pre class="code">./bin/pktwallet --create</pre>
+
+        <h3>Launching pktwallet</h3>
+        <p>Start the wallet and let it sync.  Look for a line similar to:</p>
+        <pre class="code">1608294386 [INF] headerlogger.go:64 Processed 1 block… (height 702781 …)</pre>
+        <p>Cross‑check the <code>height</code> value against the <a href="https://explorer.pkt.cash">PKT explorer</a>.  A full sync can take 12+ hours for a fresh install.</p>
+    </section>
+
+    <!-- Create Wallet -->
+    <section id="create" class="container">
+        <h2 class="section-title">Creating a New PKT Address</h2>
+        <p>With pktwallet running, generate a receiving address:</p>
+        <pre class="code">./bin/pktctl --wallet getnewaddress</pre>
+        <p>You will see a string starting with <code>pkt1</code>.  That’s your address.  To see balances of all addresses (including zero‑balance ones) use:</p>
+        <pre class="code">./bin/pktctl --wallet getaddressbalances 1 1</pre>
+    </section>
+
+    <!-- Run Wallet -->
+    <section id="run" class="container">
+        <h2 class="section-title">Running pktwallet</h2>
+        <p>Simply launch the binary in the <code>…/bin</code> directory.  Watch the logs for a sync message.  When it’s caught up you’ll see a line like:</p>
+        <pre class="code">1608294386 [INF] headerlogger.go:64 Processed 1 block in the last 24.82s (height 702781 …)</pre>
+        <p>Syncing from a new wallet may take 12 + hours; the balance will be inaccurate until the chain is fully up‑to‑date.</p>
+    </section>
+
+    <!-- New Address -->
+    <section id="address" class="container">
+        <h2 class="section-title">Creating a New PKT Address</h2>
+        <p>In a separate terminal while pktwallet is running:</p>
+        <pre class="code">./bin/pktctl --wallet getnewaddress</pre>
+        <p>Remember the address; every <code>getnewaddress</code> call adds a permanent entry in the wallet.</p>
+    </section>
+
+    <!-- CLI wallet -->
+    <section id="cli" class="container">
+        <h2 class="section-title">Installing / Starting a CLI Wallet (if you already have a <code>wallet.db</code>)</h2>
+        <ol class="list">
+            <li>Download <a href="https://github.com/pkt-cash/pktd/releases/download/pktd-v1.5.1/pktd‑v1.5.1‑macos.pkg">pktd‑v1.5.1‑macos.pkg</a> (or the appropriate release).</li>
+            <li>Run the installer.</li>
+            <li>Open a terminal and change to the pktd directory:<br><code>cd pktd</code></li>
+            <li>Create a wallet named <code>wallet personal</code> (replace the name as you wish):<br><code>./bin/pktwallet --create --wallet xxxx</code></li>
+            <li>Enter a passphrase (or leave empty).  Keep the seed and passphrase written down.</li>
+            <li>Start the wallet: <code>./bin/pktwallet --wallet</code> (whatever name you chose).</li>
+        </ol>
+    </section>
+
+    <!-- Using the wallet -->
+    <section id="using" class="container">
+        <h2 class="section-title">Common Operations with pktctl</h2>
+
+        <h3>Check Balance</h3>
+        <pre class="code">./bin/pktctl --wallet getbalance
+./bin/pktctl --wallet getaddressbalances
+./bin/pktctl --wallet getaddressbalances 1 1</pre>
+
+        <h3>Unlock / Lock the Wallet</h3>
+        <p>Unlock for a limited time (e.g. 120 s):</p>
+        <pre class="code">./bin/pktctl --wallet walletpassphrase &lt;passphrase&gt; 120</pre>
+        <p>Unlock permanently (timeout 0):</p>
+        <pre class="code">./bin/pktctl --wallet walletpassphrase &lt;passphrase&gt; 0</pre>
+        <p>To lock again: <code>./bin/pktctl --wallet walletlock</code>.  Be careful with special characters – wrap the passphrase in quotes.</p>
+
+        <h3>Send Coins</h3>
+        <p>Unlock the wallet first, then send to any address:</p>
+        <pre class="code">./bin/pktctl --wallet sendtoaddress pkt1xyz … 10</pre>
+
+        <h4>From a Specific Address (JSON array source)</h4>
+        <pre class="code">./bin/pktctl --wallet sendfrom <their‑address> 10 '["<your‑address>"]'</pre>
+        <p>Multiple source addresses can be used, e.g. <code>'["addr1","addr2"]'</code>.  Windows CMD requires back‑slashes around the JSON: <code>pktctl.exe --wallet sendfrom … [\"addr\"]</code>.</p>
+
+        <h4>Sweep / Fold</h4>
+        <p>Send 0 PKT to move everything into another address (or the same address to fold):</p>
+        <pre class="code">./bin/pktctl --wallet sendfrom <new‑address> 0 '["<old‑address>"]'</pre>
+
+        <h4>Folding Coins</h4>
+        <p>Consolidate all mining payments into spendable coins.  This is a normal transaction and may need to be repeated several times.</p>
+        <pre class="code">./bin/pktctl --wallet sendfrom <address> 0 '["<address>"]'</pre>
+    </section>
+
+    <!-- Alternative GUIs -->
+    <section id="gui" class="container">
+        <h2 class="section-title">Alternative GUI Wallets</h2>
+        <ul class="list">
+            <li><a href="https://www.pkt.world/wallet">PKT World Wallet</a> (Windows only)</li>
+            <li><a href="https://github.com/artrepreneur/Zulu">Zulu Wallet</a> (macOS)</li>
+            <li><a href="https://github.com/cjdelisle/electrum-pkt">Electrum for PKT</a> (Windows, macOS, Linux) – <strong>Do not mine into an Electrum wallet!</strong></li>
+        </ul>
+    </section>
+
+    <!-- FAQ accordion -->
+    <section id="faq" class="container">
+        <h2 class="section-title">FAQs</h2>
+
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">
+                <h4>I have several machines mining, do I need the wallet running on each machine?</h4>
+            </div>
+            <div class="faq-a"><p>No. The wallet only needs to be running on the machine where you send or fold coins.  Mining can occur with any address as long as you control it.</p></div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">
+                <h4>Should I leave pktwallet running?</h4>
+            </div>
+            <div class="faq-a"><p>It is optional.  Leaving it running keeps the node synced and speeds up <code>pktctl</code> operations, but remember to lock it when idle.</p></div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentNode.classList.toggle('open')">
+                <h4>How often should I fold?</h4>
+            </div>
+            <div class="faq-a"><p>Folding consolidates the ~1440 tiny mining payments per day into spendable coins.  Daily or every few days is common.  Script it if you prefer.</p></div>
+        </div>
+    </section>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="container">
+        <div class="foot-grid">
+            <div>
+                <div class="brand" style="color:#fff;text-decoration:none">
+                    <div class="logo" aria-hidden="true" style="background:#fff;color:#d12133">P</div>
+                    <div>
+                        <div class="brand-name">PacketCrypt</div>
+                        <div class="tagline" style="color:#ffe5e8">Bandwidth‑hard crypto</div>
+                    </div>
+                </div>
+                <p style="margin-top:10px;color:#ffe5e8">Open, cooperative proof‑of‑work that rewards connectivity.</p>
+            </div>
+        </div>
+        <div class="copyright">
+            © <span id="year"></span> PacketCrypt — This site is community‑maintained. PacketCrypt is an algorithm; network parameters vary by implementation.
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    function toggleMenu() {
+        document.querySelector('.nav-links').classList.toggle('open');
+    }
+</script>
+</body>
+</html>

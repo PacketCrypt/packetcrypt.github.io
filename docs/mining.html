@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PacketCrypt Mining Documentation</title>
+  <meta name="description"
+        content="Learn how to announce‑mine PacketCrypt, how to set up your miner, choose pools, limit resources, run a block pool and more." />
+  <meta name="theme-color" content="#d12133" />
+  <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 fill=%27%23d12133%27/%3E%3Ctext x=%2750%25%27 y=%2756%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Arial%2C Helvetica%2C sans-serif%27 font-size=%2758%27 fill=%27%23fff%27%3EP%3C/text%3E%3C/svg%3E" />
+  <style>
+    :root{
+      --primary:#d12133;
+      --secondary:#ffffff;
+      --text:#1a1a1a;
+      --muted:#6b6b6b;
+      --bg:#ffffff;
+      --surface:#ffffff;
+      --border:#ececec;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;padding:0;background:var(--bg);color:var(--text);
+      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
+      display:flex;flex-direction:column;min-height:100vh;
+    }
+    main{flex:1}
+    footer{margin-top:auto}
+    a{color:var(--primary);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1180px;margin:0 auto;padding:0 20px}
+    .skip-link{position:absolute;left:-9999px;top:auto;overflow:hidden}
+    .skip-link:focus{left:12px;top:12px;background:#000;color:#fff;padding:10px 14px;border-radius:8px;z-index:9999}
+    /* Header */
+    header{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:saturate(180%) blur(8px);
+      background:rgba(255,255,255,0.8);
+      border-bottom:1px solid var(--border);
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:12px;color:var(--text);text-decoration:none}
+    .logo{
+      width:40px;height:40px;border-radius:10px;background:var(--primary);
+      color:#fff;display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)
+    }
+    .brand-name{font-weight:800;letter-spacing:.2px}
+    .tagline{font-size:12px;color:var(--muted);margin-top:-4px}
+    .nav-links{display:flex;gap:18px;align-items:center}
+    .nav-links a{color:var(--text);font-weight:600;padding:8px 10px;border-radius:8px}
+    .nav-links a:hover{background:#f8f8f8;text-decoration:none}
+    .cta{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:10px 16px;font-weight:700;box-shadow:var(--shadow)}
+    .cta:hover{filter:brightness(.95);cursor:pointer}
+    .menu-btn{display:none;background:transparent;border:0;padding:8px}
+    /* Hero */
+    .hero{padding:72px 0 40px;position:relative;overflow:hidden}
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+    .super{display:inline-block;background:#feecee;color:var(--primary);font-weight:800;border-radius:999px;padding:6px 12px;margin-bottom:16px}
+    h1{font-size:44px;line-height:1.1;margin:0 0 14px}
+    .lead{font-size:18px;color:#343434;margin:0 0 22px}
+    .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:10px;border-radius:12px;padding:12px 16px;font-weight:800;border:2px solid transparent}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{filter:brightness(.95);text-decoration:none}
+    .btn-ghost{background:#fff;color:var(--primary);border-color:var(--primary)}
+    .btn-ghost:hover{background:#fff1f3;text-decoration:none}
+    .hero-card{
+      background:#fff;border:1px solid var(--border);border-radius:18px;padding:22px;
+      box-shadow:var(--shadow)
+    }
+    .stat{display:flex;justify-content:space-between;border-top:1px dashed var(--border);padding:12px 0}
+    .stat:first-child{border-top:0}
+    .stat b{font-size:28px}
+    .stat small{color:var(--muted)}
+    /* Sections */
+    section{padding:54px 0}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}
+    .section-title{font-size:28px;margin:0}
+    .kicker{color:var(--primary);font-weight:800;letter-spacing:.4px;text-transform:uppercase;font-size:12px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{
+      background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)
+    }
+    .card h3{margin:0 0 8px;font-size:18px}
+    .card p{margin:0;color:#343434}
+    .icon{
+      width:40px;height:40px;border-radius:10px;background:#feecee;color:var(--primary);
+      display:grid;place-items:center;font-weight:900;margin-bottom:10px
+    }
+    .list{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+    .list li{display:flex;gap:8px}
+    .check{color:var(--primary);font-weight:900}
+    .pill{display:inline-block;background:#fff1f3;color:var(--primary);border:1px solid #ffd7dd;border-radius:999px;padding:6px 10px;font-weight:700}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .muted{color:var(--muted)}
+    /* FAQ */
+    .faq-item{border-bottom:1px solid var(--border)}
+    .faq-q{display:flex;justify-content:space-between;gap:18px;padding:16px 0;cursor:pointer}
+    .faq-q h4{margin:0;font-size:16px}
+    .faq-a{display:none;padding:0 0 14px;color:#343434}
+    .faq-item.open .faq-a{display:block}
+    /* Footer */
+    footer{
+      background:var(--primary);
+      color:#fff;
+      margin-top:40px;
+      flex-shrink:0;
+    }
+    .foot{display:grid;gap:12px;padding:28px 0}
+    .foot a{color:#fff;text-decoration:underline}
+    .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:18px}
+    .copyright{border-top:1px solid rgba(255,255,255,.25);padding-top:14px;color:#ffe5e8}
+    /* Utilities */
+    .surface-alt{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px}
+    .code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;background:#f8f8f8;border:1px solid var(--border);padding:10px;border-radius:8px}
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero-grid,.grid-3,.two-col,.foot-grid{grid-template-columns:1fr}
+      .nav-links{display:none}
+      .menu-btn{display:block}
+    }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="container nav" role="navigation" aria-label="Main">
+    <a class="brand" href="#">
+      <div class="logo" aria-hidden="true">P</div>
+      <div>
+        <div class="brand-name">PacketCrypt</div>
+        <div class="tagline">Bandwidth‑hard crypto</div>
+      </div>
+    </a>
+
+    <!-- Primary navigation -->
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#mining">Mining</a>
+      <a href="#ann-mine">Announce‑Mine</a>
+      <a href="#setup">Setup Guides</a>
+      <a href="#pools">Pools</a>
+      <a href="#resources">Resources</a>
+      <a href="#faq">FAQ</a>
+      <a href="/docs">Docs Index</a>
+    </nav>
+
+    <!-- Mobile menu button -->
+    <button class="menu-btn" aria-label="Open menu" onclick="toggleMenu()">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+           stroke="#d12133" stroke-width="2" stroke-linecap="round"
+           stroke-linejoin="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main id="main">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <h1>PacketCrypt Mining Documentation</h1>
+        <p class="lead">A complete guide to announce‑mining PacketCrypt, running a pool and managing resources.</p>
+      </div>
+    </div>
+
+    <!-- Mining section -->
+    <section id="mining" class="container">
+      <h2 class="section-title">Mining</h2>
+      <p>PacketCrypt is a <strong>bandwidth‑hard proof‑of‑work</strong> – mining requires a large amount of network bandwidth. Miners collaborate by sending small messages called <em>Announcements</em>. These messages must be broadcast over the Internet, so the more bandwidth you have, the more announcements you can produce.</p>
+      <p>All mining is performed in <strong>pools</strong>. PacketCrypt mining is split into two distinct stages:</p>
+      <ul class="list">
+        <li><strong>Announcement Mining</strong> – CPU mining of announcements.</li>
+        <li><strong>Block Mining</strong> – Collect announcements from Announcement miners and mine blocks. This is normally done in a pool’s data‑center.</li>
+      </ul>
+    </section>
+  </section>
+
+  <!-- Announce‑Mine section -->
+  <section id="ann-mine" class="container">
+    <h2 class="section-title">How to Announce‑Mine</h2>
+    <p>Choose the method that best matches your technical comfort.</p>
+
+    <h3>1. Install a Pre‑built Binary</h3>
+    <p>Download the appropriate binary from the <a href="https://github.com/cjdelisle/packetcrypt_rs/releases/">PacketCrypt releases page</a>:</p>
+    <ul class="list">
+      <li><strong>Windows</strong> – <code>-windows.zip</code>, unzip.</li>
+      <li><strong>macOS</strong> – <code>.pkg</code>, double‑click to install.</li>
+      <li><strong>Linux</strong> – <code>-linux_amd64</code>, rename to <code>packetcrypt</code>.</li>
+      <li>Arch/Manjaro – <a href="https://aur.archlinux.org/packages/packetcrypt">AUR package</a>.</li>
+    </ul>
+
+    <h3>2. Build From Source</h3>
+    <p>Requires <a href="https://rustup.rs/">Rust</a>. The following commands build the miner:</p>
+    <pre><code>git clone https://github.com/PacketCrypt/packetcrypt_rs
+cd packetcrypt_rs
+cargo build --release</code></pre>
+
+    <h3 id="begin-ann-mine">Begin Announcement Mining</h3>
+    <p><strong>⚠️ Important:</strong> You can only mine into the <a href="cmdwallet.html">Command Line Wallet</a>, <a href="https://www.pkt.world/wallet">Pkt.World Wallet</a> or the <a href="https://github.com/artrepreneur/PKT-Cash-Wallet/releases">Mac GUI Wallet</a> – not the electrum wallet.</p>
+
+    <h4>Using the CLI</h4>
+    <pre><code>packetcrypt ann -p &lt;your_wallet_address&gt; pool_1 [pool_2 pool_3 pool_4]</code></pre>
+
+    <h4>Using a Configuration File</h4>
+    <p>Configuration is JSON. Example <code>config.json</code>:</p>
+    <pre><code>{
+  "payment_addr": "&lt;your_wallet_address&gt;",
+  "pools": [
+    "pool_1",
+    "pool_2",
+    "pool_3",
+    "pool_4"
+  ]
+}</code></pre>
+    <p>Run with:</p>
+    <pre><code>packetcrypt ann -c "./config.json"</code></pre>
+
+  </section>
+
+  <!-- Setup guides -->
+  <section id="setup" class="container">
+    <h2 class="section-title">Setup Guides</h2>
+
+    <h3>How to install a PKT miner on Mac</h3>
+    <ol class="list">
+      <li>Install <a href="https://github.com/artrepreneur/Zulu">Zulu</a> or <a href="https://docs.pkt.cash/en/latest/pktd/pktwallet/">CLI wallet</a>.</li>
+      <li>Download <a href="https://github.com/cjdelisle/packetcrypt_rs/releases/tag/packetcrypt-v0.5.0">PacketCrypt.pkg</a>.</li>
+      <li>Open Terminal.</li>
+      <li>Install Rust: <code>curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh</code> (press <code>1</code> to confirm).</li>
+      <li>Run <code>sudo install make</code>.</li>
+      <li>Clone repo & build: <code>git clone https://github.com/cjdelisle/packetcrypt_rs && cd packetcrypt_rs && ~/.cargo/bin/cargo build --release</code>.</li>
+      <li>Start mining: <code>./target/release/packetcrypt ann -p &lt;PKT Wallet Address&gt; &lt;pool_1&gt; &lt;pool_2&gt; &lt;pool_3&gt; &lt;pool_4&gt;</code>.</li>
+    </ol>
+
+    <h3>Choosing Pools to Mine In</h3>
+    <p>List as many pools as your bandwidth allows. Typical high‑difficulty pools:</p>
+    <ul class="list">
+      <li>PktWorld: <code>http://pool.pkt.world</code></li>
+    </ul>
+    <p>Place the highest‑difficulty pool first for maximum acceptance.</p>
+  </section>
+
+  <!-- Resource limits -->
+  <section id="resources" class="container">
+    <h2 class="section-title">Limiting System Resource Usage</h2>
+
+    <h3>Limit CPU Usage</h3>
+    <p>By default PacketCrypt uses all available threads. Limit them with the <code>-t</code> flag or <code>threads</code> key:</p>
+    <pre><code>packetcrypt ann -p &lt;addr&gt; pool_1 [pool_2] -t 4</code></pre>
+    <pre><code>{ "threads": 4 }</code></pre>
+
+    <h3>Limit Bandwidth Usage</h3>
+    <p>Bandwidth is proportional to <em>difficulty of the first pool</em> and <em>number of pools mined</em>. Use a high‑difficulty primary pool or reduce the number of pools to cut bandwidth.</p>
+  </section>
+
+  <!-- Block pool -->
+  <section id="pool" class="container">
+    <h2 class="section-title">Block Mining & Running a Pool</h2>
+    <p>Block mining requires the full upload bandwidth of all announcement miners combined. Pool operators usually host the block node in the same location as the announcement handlers.</p>
+    <p>Running your own pool needs the following components (one instance each, more for scaling):</p>
+    <ul class="list">
+      <li><strong>pktd node</strong> – required for the Master.</li>
+      <li><strong>Master</strong> – coordinates the pool.</li>
+      <li><strong>Ann Handler(s)</strong> – receive announcements and feed block miners.</li>
+      <li><strong>Block Miner(s)</strong> – mine blocks.</li>
+      <li><strong>Block Handler(s)</strong> – receive shares and submit blocks.</li>
+      <li><strong>Paymaker</strong> – tracks work and distributes payouts.</li>
+    </ul>
+  </section>
+
+  <!-- More info -->
+  <section id="more" class="container">
+    <h2 class="section-title">More Information & Pool Code</h2>
+    <p>The Rust version only contains announcement miners and handlers. The C / Node.js project (with full pool support) is on <a href="https://github.com/cjdelisle/PacketCrypt">GitHub</a>.</p>
+  </section>
+
+  <!-- Announcement difficulty -->
+  <section id="difficulty" class="container">
+    <h2 class="section-title">Announcement Difficulty</h2>
+    <p>Pool operators set the <strong>announcement difficulty</strong> to control bandwidth and block‑mining power. Raising the difficulty halves the bandwidth per announcement and halves the pool’s effective power.</p>
+    <h3>Optimal Difficulty Curve</h3>
+    <p>For a constant announcement supply the best power multiplier is achieved using the last three block periods. The curve peaks at difficulty 2 and halves with each doubling thereafter.</p>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="container">
+    <h2 class="section-title">FAQ for Announcement Miners</h2>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <h4>What does overflow mean?</h4>
+        <span>+</span>
+      </div>
+      <div class="faq-a">
+        <p>When an announcement handler’s queue fills up it returns an “overflow” error. The miner may still be paid – you’ll see “operation timed out” if the handler is unresponsive.</p>
+       </div>
+    </div>
+    <!-- add more FAQ items as needed -->
+  </section>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer role="contentinfo">
+  <div class="container foot">
+    <div class="foot-grid">
+      <div>
+        <div class="brand" style="color:#fff;text-decoration:none">
+          <div class="logo" aria-hidden="true" style="background:#fff;color:#d12133">P</div>
+          <div>
+            <div class="brand-name">PacketCrypt</div>
+            <div class="tagline" style="color:#ffe5e8">Bandwidth‑hard crypto</div>
+          </div>
+        </div>
+        <p style="margin-top:10px;color:#ffe5e8">Open, cooperative proof‑of‑work that rewards connectivity.</p>
+      </div>
+    </div>
+    <div class="copyright">
+      © <span id="year"></span> PacketCrypt — This site is community‑maintained. PacketCrypt is an algorithm; network parameters vary by implementation.
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Update copyright year */
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* Mobile menu toggle */
+  function toggleMenu() {
+    document.querySelector('.nav-links').classList.toggle('open');
+  }
+
+  /* FAQ accordion */
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    item.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

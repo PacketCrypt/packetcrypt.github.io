@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PacketCrypt Documentation – FAQ</title>
+  <meta name="description"
+        content="PacketCrypt documentation. Frequently asked questions, how‑to guides and community links for mining, wallets, setup, network steward, etc." />
+  <meta name="theme-color" content="#d12133" />
+  <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 fill=%27%23d12133%27/%3E%3Ctext x=%2750%25%27 y=%2756%25%27 dominant-baseline=%27middle%27 text-anchor=%27middle%27 font-family=%27Arial%2C Helvetica%2C sans-serif%27 font-size=%2758%27 fill=%27%23fff%27%3EP%3C/text%3E%3C/svg%3E" />
+  <style>
+    :root{
+      --primary:#d12133;
+      --secondary:#ffffff;
+      --text:#1a1a1a;
+      --muted:#6b6b6b;
+      --bg:#ffffff;
+      --surface:#ffffff;
+      --border:#ececec;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;padding:0;background:var(--bg);color:var(--text);
+      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
+      display:flex;flex-direction:column;min-height:100vh;
+    }
+    main{flex:1}            /* push footer to bottom */
+    footer{margin-top:auto}
+    a{color:var(--primary);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1180px;margin:0 auto;padding:0 20px}
+    .skip-link{position:absolute;left:-9999px;top:auto;overflow:hidden}
+    .skip-link:focus{left:12px;top:12px;background:#000;color:#fff;padding:10px 14px;border-radius:8px;z-index:9999}
+    /* Header */
+    header{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:saturate(180%) blur(8px);
+      background:rgba(255,255,255,0.8);
+      border-bottom:1px solid var(--border);
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:12px;color:var(--text);text-decoration:none}
+    .logo{
+      width:40px;height:40px;border-radius:10px;background:var(--primary);
+      color:#fff;display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)
+    }
+    .brand-name{font-weight:800;letter-spacing:.2px}
+    .tagline{font-size:12px;color:var(--muted);margin-top:-4px}
+    .nav-links{display:flex;gap:18px;align-items:center}
+    .nav-links a{color:var(--text);font-weight:600;padding:8px 10px;border-radius:8px}
+    .nav-links a:hover{background:#f8f8f8;text-decoration:none}
+    .cta{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:10px 16px;font-weight:700;box-shadow:var(--shadow)}
+    .cta:hover{filter:brightness(.95);cursor:pointer}
+    .menu-btn{display:none;background:transparent;border:0;padding:8px}
+    /* Hero */
+    .hero{padding:72px 0 40px;position:relative;overflow:hidden}
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+    .super{display:inline-block;background:#feecee;color:var(--primary);font-weight:800;border-radius:999px;padding:6px 12px;margin-bottom:16px}
+    h1{font-size:44px;line-height:1.1;margin:0 0 14px}
+    .lead{font-size:18px;color:#343434;margin:0 0 22px}
+    .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:10px;border-radius:12px;padding:12px 16px;font-weight:800;border:2px solid transparent}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{filter:brightness(.95);text-decoration:none}
+    .btn-ghost{background:#fff;color:var(--primary);border-color:var(--primary)}
+    .btn-ghost:hover{background:#fff1f3;text-decoration:none}
+    .hero-card{
+      background:#fff;border:1px solid var(--border);border-radius:18px;padding:22px;
+      box-shadow:var(--shadow)
+    }
+    .stat{display:flex;justify-content:space-between;border-top:1px dashed var(--border);padding:12px 0}
+    .stat:first-child{border-top:0}
+    .stat b{font-size:28px}
+    .stat small{color:var(--muted)}
+    /* Sections */
+    section{padding:54px 0}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}
+    .section-title{font-size:28px;margin:0}
+    .kicker{color:var(--primary);font-weight:800;letter-spacing:.4px;text-transform:uppercase;font-size:12px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{
+      background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)
+    }
+    .card h3{margin:0 0 8px;font-size:18px}
+    .card p{margin:0;color:#343434}
+    .icon{
+      width:40px;height:40px;border-radius:10px;background:#feecee;color:var(--primary);
+      display:grid;place-items:center;font-weight:900;margin-bottom:10px
+    }
+    .list{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+    .list li{display:flex;gap:8px}
+    .check{color:var(--primary);font-weight:900}
+    .pill{display:inline-block;background:#fff1f3;color:var(--primary);border:1px solid #ffd7dd;border-radius:999px;padding:6px 10px;font-weight:700}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .muted{color:var(--muted)}
+    /* FAQ */
+    .faq-item{border-bottom:1px solid var(--border)}
+    .faq-q{display:flex;justify-content:space-between;gap:18px;padding:16px 0;cursor:pointer}
+    .faq-q h4{margin:0;font-size:16px}
+    .faq-a{display:none;padding:0 0 14px;color:#343434}
+    .faq-item.open .faq-a{display:block}
+    /* Footer */
+    footer{
+      background:var(--primary);
+      color:#fff;
+      margin-top:40px;  /* keep original spacing */
+      flex-shrink:0;
+    }
+    .foot{display:grid;gap:12px;padding:28px 0}
+    .foot a{color:#fff;text-decoration:underline}
+    .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:18px}
+    .copyright{border-top:1px solid rgba(255,255,255,.25);padding-top:14px;color:#ffe5e8}
+    /* Utilities */
+    .surface-alt{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px}
+    .code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;background:#f8f8f8;border:1px solid var(--border);padding:10px;border-radius:8px}
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero-grid,.grid-3,.two-col,.foot-grid{grid-template-columns:1fr}
+      .nav-links{display:none}
+      .menu-btn{display:block}
+    }
+  </style>
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="container nav" role="navigation" aria-label="Main">
+    <a class="brand" href="#">
+      <div class="logo" aria-hidden="true">P</div>
+      <div>
+        <div class="brand-name">PacketCrypt</div>
+        <div class="tagline">Bandwidth‑hard crypto</div>
+      </div>
+    </a>
+
+    <!-- Primary navigation -->
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="#faq">FAQ</a>
+      <a href="#setup">Setup</a>
+      <a href="/">Main Page</a>
+    </nav>
+
+    <!-- Mobile menu button -->
+    <button class="menu-btn" aria-label="Open menu" onclick="toggleMenu()">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+           stroke="#d12133" stroke-width="2" stroke-linecap="round"
+           stroke-linejoin="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main id="main">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <h1>PacketCrypt Documentation</h1>
+        <p class="lead">Frequently asked questions, setup guides, community links and everything you need to start using PacketCrypt.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="container">
+    <h2 class="section-title">FAQ</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <h4>What is PacketCrypt Coin?</h4>
+        <span>+</span>
+      </div>
+      <div class="faq-a">
+        PacketCrypt Coin is a native mined coin based on an open source project. There are multiple companies in the PacketCrypt Coin ecosystem but no company “behind PacketCrypt Coin.”<br />
+        PacketCrypt Coin allows users to monetize their unused internet bandwidth. By participating in the PacketCrypt Coin Network you are helping to build a faster, stronger, and more secure, decentralized network.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <h4>Where can I buy or sell PacketCrypt Coin?</h4>
+        <span>+</span>
+      </div>
+      <div class="faq-a">
+        <p>Trade on the community Telegram chat (always use escrow and read the guidelines).</p>
+      </div>
+    </div>
+
+    <!-- ... continue adding more FAQ items following the same pattern ... -->
+
+    <!-- Mining -->
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <h4>How is PacketCrypt Coin mined?</h4>
+        <span>+</span>
+      </div>
+      <div class="faq-a">
+        PacketCrypt Coin is <a href="mining.html">mined</a> using the novel PacketCrypt bandwidth‑hard mining algorithm that requires both CPU and network bandwidth. Mining together with other miners gives a better advantage.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <h4>What wallet do I use for mining?</h4>
+        <span>+</span>
+      </div>
+      <div class="faq-a">
+        See the <a href="mining.html">Mining Guide</a>.
+      </div>
+    </div>
+
+    <!-- Network Steward -->
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <h4>What is the Network Steward?</h4>
+        <span>+</span>
+      </div>
+      <div class="faq-a">
+        The Network Steward was part of the consensus rules of the legacy PKT blockchain. 20 % of every newly mined block is routed to a wallet that funds open‑source projects. 90‑day deadlines ensure the money is spent or burned.
+        <b>The <a href="https://github.com/pkt-cash/ns-projects/commit/0f3cbf1be41d71f998eeb92dc066b253fb519028">Network Steward</a> ceased to exist with the pkt.cash migration to a Base Token.</b>
+        PacketCrypt is also known as PKTc or PKT classic, it is the original block chain.
+      </div>
+    </div>
+
+    <!-- Network Steward -->
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <h4>Why do I see references to 'PKT'?</h4>
+        <span>+</span>
+      </div>
+      <div class="faq-a">
+        PacketCrypt is also known as PKTc or PKT classic, it was formerly known as pkt.cash or "pkt", it is the original block chain of pkt.cash before it migrated to a token on base. Some code and guides still make reference of pktc as 'pkt'.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Setup / Resources Section -->
+  <section id="setup" class="container">
+    <h2 class="section-title">Getting Started & Setup Resources</h2>
+     <div class="grid-3">
+      <div class="card">
+        <h3>Mining Setup</h3>
+        <p>Step‑by‑step instructions for installing and running the PacketCrypt miner on Windows, Linux, and macOS.</p>
+        <a href="mining.html" class="btn btn-primary">Read the Guide</a>
+      </div>
+      <div class="card">
+        <h3>Wallet Setup</h3>
+        <p>Configure PacketCrypt Electrum, PKT.world, or Zulu Wallet and secure your keys.</p>
+        <a href="wallet.html" class="btn btn-primary">Read the Guide</a>
+      </div>
+      <div class="card">
+        <h3>Infrastructure Setup</h3>
+        <p>Deploy a PacketCrypt node.</p>
+        <a href="packetcryptd.html" class="btn btn-primary">Read the Guide</a>
+      </div>
+    </div>
+    <div class="card" style="text-align: center;">
+      <h3>Pool Setup</h3>
+      <p>View a guide sponsored by the <a href="https://github.com/pkt-cash/ns-projects/tree/master/projects/complete">previous network steward</a> on how to create a pool.</p>
+      <a href="pool_setup.html" class="btn btn-primary">Read the Guide</a>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer role="contentinfo">
+  <div class="container foot">
+    <div class="foot-grid">
+      <div>
+        <div class="brand" style="color:#fff;text-decoration:none">
+          <div class="logo" aria-hidden="true" style="background:#fff;color:#d12133">P</div>
+          <div>
+            <div class="brand-name">PacketCrypt</div>
+            <div class="tagline" style="color:#ffe5e8">Bandwidth‑hard crypto</div>
+          </div>
+        </div>
+        <p style="margin-top:10px;color:#ffe5e8">Open, cooperative proof‑of‑work that rewards connectivity.</p>
+      </div>
+    </div>
+    <div class="copyright">
+      © <span id="year"></span> PacketCrypt — This site is community‑maintained. PacketCrypt is an algorithm; network parameters vary by implementation.
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* Update year */
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* Mobile menu toggle */
+  function toggleMenu() {
+    const nav = document.querySelector('.nav-links');
+    nav.classList.toggle('open');
+  }
+
+  /* FAQ accordion */
+  function toggleFaq(elem) {
+    const item = elem.parentElement;
+    item.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
